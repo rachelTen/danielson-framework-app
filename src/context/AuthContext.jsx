@@ -9,27 +9,12 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (session?.user) {
-          setUser(session.user)
-          await fetchProfile(session.user.id)
-        }
-      } catch (error) {
-        console.error('Auth initialization error:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    initializeAuth()
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         if (session?.user) {
           setUser(session.user)
-          await fetchProfile(session.user.id)
+          // fire-and-forget: never await inside onAuthStateChange or Supabase deadlocks
+          fetchProfile(session.user.id)
         } else {
           setUser(null)
           setProfile(null)
