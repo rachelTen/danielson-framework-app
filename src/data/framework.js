@@ -4,72 +4,72 @@ export const frameworkData = {
     description: "How teachers organize and design instruction with intentionality and equity",
     components: {
       "1a": {
-        name: "Applying Knowledge of Content and Pedagogy",
+        name: "Demonstrating Knowledge of Content and Pedagogy",
         subcomponents: [
-          "Knowledge of content",
+          "Knowledge of content and structure of the discipline",
           "Knowledge of prerequisite relationships",
           "Knowledge of content-related pedagogy",
-          "Knowledge of interdisciplinary relationships and skills"
+          "Knowledge of common student misconceptions"
         ],
         prompts: [
-          "How do you ensure deep understanding of foundational concepts in your subject?",
+          "How do you ensure deep understanding of foundational concepts and their prerequisite relationships in your subject?",
           "How do you connect your subject to other disciplines or real-world contexts to deepen student understanding?",
-          "What strategies do you use to choose pedagogy that matches content and builds on student prior knowledge?",
+          "What strategies do you use to choose pedagogy that matches content and addresses common student misconceptions?",
           "Describe a time you adjusted your teaching approach based on evidence of student understanding."
         ]
       },
       "1b": {
-        name: "Knowing and Valuing Students",
+        name: "Demonstrating Knowledge of Students",
         subcomponents: [
-          "Knowledge of characteristics of age group",
-          "Knowledge of students' varied approaches to learning",
-          "Knowledge of students' skills and knowledge",
-          "Knowledge of students' interests, cultural identities, and funds of knowledge",
-          "Honoring students' lived experiences and identities"
+          "Knowledge of child and adolescent development",
+          "Knowledge of the learning process",
+          "Knowledge of students' skills, knowledge, and language proficiency",
+          "Knowledge of students' interests and cultural heritage",
+          "Knowledge of students' special needs"
         ],
         prompts: [
           "How do you learn about and honour your students' cultural identities, lived experiences, and funds of knowledge?",
           "What strategies do you use to incorporate students' interests and identities into lessons?",
-          "How do you differentiate instruction to meet the needs of students with varying skill levels and learning approaches?",
+          "How do you differentiate instruction to meet the needs of students with varying skill levels, language proficiency, and learning approaches?",
           "Describe how you help students see themselves reflected in the curriculum and feel a sense of belonging.",
           "How do you build on what students bring from their homes and communities?"
         ]
       },
       "1c": {
-        name: "Selecting Instructional Goals",
+        name: "Setting Instructional Outcomes",
         subcomponents: [
-          "Values and equity orientation",
+          "Value and alignment with standards",
           "Clarity and measurability",
-          "Suitability for diverse students",
+          "Suitability for diverse learners",
           "Balance among different types of learning"
         ],
         prompts: [
-          "How do you choose instructional goals that align with standards while centering equity and student voice?",
-          "How do you ensure goals are clear, measurable, and accessible to all students?",
-          "What balance do you aim for between skills, knowledge, and developing student agency?",
-          "How do your goals prepare all students for success in college, careers, and civic life?"
+          "How do you set instructional outcomes that align with standards while remaining meaningful and accessible to all students?",
+          "How do you ensure outcomes are clear, measurable, and achievable by students with varying needs?",
+          "What balance do you aim for between knowledge, skills, and higher-order thinking in your outcomes?",
+          "How do your outcomes prepare all students for success in college, careers, and civic life?"
         ]
       },
       "1d": {
-        name: "Using Resources Effectively",
+        name: "Demonstrating Knowledge of Resources",
         subcomponents: [
           "Resources for teaching",
           "Resources for student learning",
-          "Culturally responsive and affirming resources"
+          "Technology resources"
         ],
         prompts: [
           "What resources do you use to enhance your teaching and reflect diverse perspectives?",
           "How do you ensure students have independent access to resources that support their learning and identities?",
-          "How do you evaluate resources for cultural responsiveness and bias?",
+          "How do you evaluate resources for quality, cultural responsiveness, and bias?",
           "Describe how technology or materials you've chosen support learning for students with different needs."
         ]
       },
       "1e": {
-        name: "Planning Coherent Instruction",
+        name: "Designing Coherent Instruction",
         subcomponents: [
           "Learning activities",
           "Instructional materials and resources",
-          "Instructional groups and student choice",
+          "Instructional groups",
           "Lesson and unit structure"
         ],
         prompts: [
@@ -80,15 +80,15 @@ export const frameworkData = {
         ]
       },
       "1f": {
-        name: "Designing and Analyzing Assessments",
+        name: "Designing Student Assessments",
         subcomponents: [
-          "Congruence with instructional goals",
+          "Congruence with instructional outcomes",
           "Criteria and standards",
-          "Use of assessment data for planning",
-          "Assessment as learning, not just of learning"
+          "Design of formative assessments",
+          "Use of assessment data for planning"
         ],
         prompts: [
-          "How do you design assessments that authentically measure whether students have met learning goals?",
+          "How do you design assessments that authentically measure whether students have met your instructional outcomes?",
           "How do students understand the criteria and co-create rubrics or success indicators?",
           "How do you use formative assessment data in real time to adjust instruction?",
           "How do you use multiple types of assessments to capture the full range of student learning and strengths?"
@@ -97,16 +97,14 @@ export const frameworkData = {
     }
   },
   domain2: {
-    name: "Learning Environments",
+    name: "The Classroom Environment",
     description: "The interactions and conditions that support all students to thrive",
     components: {
       "2a": {
-        name: "Cultivating Respectful and Affirming Environments",
+        name: "Creating an Environment of Respect and Rapport",
         subcomponents: [
-          "Teacher interactions with students",
-          "Student-to-student interactions",
-          "Cultural responsiveness in relationships",
-          "Restorative approaches to conflict"
+          "Teacher interaction with students",
+          "Student interactions with other students"
         ],
         prompts: [
           "How do you build positive, authentic relationships with students that honour their identities?",
@@ -116,57 +114,53 @@ export const frameworkData = {
         ]
       },
       "2b": {
-        name: "Student Agency and Pride in Work",
+        name: "Establishing a Culture for Learning",
         subcomponents: [
-          "Importance and relevance of learning",
-          "Student ownership and choice in work",
+          "Importance of the content and of learning",
           "Expectations for learning and achievement",
-          "Celebrating student identity and effort"
+          "Student pride in work"
         ],
         prompts: [
           "How do you help students understand the relevance and purpose of what they're learning?",
-          "How do students make informed choices about their learning and have autonomy in their work?",
+          "How do students make informed choices about their learning and take ownership of their work?",
           "How do you maintain high expectations while supporting all students to achieve?",
-          "How do you celebrate student work in ways that honor diverse forms of achievement and identity?"
+          "How do you celebrate student work in ways that honor diverse forms of achievement and effort?"
         ]
       },
       "2c": {
-        name: "Maintaining Purposeful Environments",
+        name: "Managing Classroom Procedures",
         subcomponents: [
-          "Student-led routines and procedures",
-          "Smooth transitions and pacing",
-          "Student responsibility for materials",
-          "Student autonomy and independence"
+          "Management of instructional groups",
+          "Management of transitions",
+          "Management of materials and supplies",
+          "Performance of non-instructional duties"
         ],
         prompts: [
           "How do routines and procedures build student independence and responsibility rather than just compliance?",
           "How do you involve students in establishing and monitoring classroom expectations?",
-          "How do transitions support learning continuity and student agency?",
+          "How do transitions support learning continuity and reduce lost instructional time?",
           "How do students take responsibility for accessing and caring for classroom materials?"
         ]
       },
       "2d": {
-        name: "Supporting Positive Student Behavior",
+        name: "Managing Student Behavior",
         subcomponents: [
-          "Shared community expectations",
-          "Student self-monitoring and co-regulation",
-          "Proactive and restorative responses",
-          "Understanding root causes of behavior"
+          "Clear expectations for behavior",
+          "Monitoring of student behavior",
+          "Response to student misbehavior"
         ],
         prompts: [
-          "How do students participate in establishing community expectations and behavioural norms?",
-          "How do you support students to self-monitor and co-regulate their behaviour?",
+          "How do students participate in establishing community expectations and behavioral norms?",
+          "How do you monitor student behavior and support students in self-managing their conduct?",
           "How do you use proactive strategies and restorative practices instead of only reactive consequences?",
-          "How do you understand the context and root causes of student behaviour before responding?"
+          "How do you seek to understand the root causes of student behavior before responding?"
         ]
       },
       "2e": {
-        name: "Co-Creating Inclusive Physical Space",
+        name: "Organizing Physical Space",
         subcomponents: [
           "Safety and accessibility for all learners",
-          "Student voice in space design",
-          "Inclusive arrangement and resources",
-          "Welcoming and affirming environment"
+          "Arrangement of furniture and use of physical resources"
         ],
         prompts: [
           "How is your physical space arranged to ensure safety and accessibility for all students?",
@@ -178,15 +172,16 @@ export const frameworkData = {
     }
   },
   domain3: {
-    name: "Learning Experiences",
+    name: "Instruction",
     description: "The core of teaching—engaging all students as active participants in learning",
     components: {
       "3a": {
-        name: "Communicating About Purpose and Content",
+        name: "Communicating with Students",
         subcomponents: [
-          "Clarity of purpose and learning targets",
-          "Accurate oral and written communication",
-          "Accessibility of communication"
+          "Expectations for learning",
+          "Directions and procedures",
+          "Explanation of content",
+          "Use of oral and written language"
         ],
         prompts: [
           "How do you communicate the learning purpose and success criteria so all students understand what they're learning and why?",
@@ -196,44 +191,41 @@ export const frameworkData = {
         ]
       },
       "3b": {
-        name: "Facilitating Dialogue and Thinking",
+        name: "Using Questioning and Discussion Techniques",
         subcomponents: [
-          "Quality and types of questions",
-          "Student-to-student dialogue",
-          "Equitable student participation",
-          "Student questioning and challenging ideas with respect"
+          "Quality of questions",
+          "Discussion techniques",
+          "Student participation"
         ],
         prompts: [
           "What types of questions do you ask to promote deep thinking and invite multiple perspectives?",
-          "How do you create structures where students respond to and challenge each other's thinking with respect and humility?",
+          "How do you create structures where students respond to and build on each other's thinking?",
           "How do you ensure all students have equitable opportunities to participate and be heard?",
-          "How do students question the content, each other, and you in respectful ways?"
+          "How do students question the content, each other, and you in respectful and productive ways?"
         ]
       },
       "3c": {
-        name: "Designing Relevant Learning Experiences",
+        name: "Engaging Students in Learning",
         subcomponents: [
-          "Culturally relevant content representation",
-          "Engaging activities aligned to goals",
-          "Student choice and voice",
-          "Diverse materials and resources",
-          "Pacing that honours diverse learners"
+          "Activities and assignments",
+          "Grouping of students",
+          "Instructional materials and resources",
+          "Structure and pacing"
         ],
         prompts: [
           "How do you represent content in ways that are culturally relevant and connect to students' lives and identities?",
-          "What types of activities keep all students engaged and progressing toward learning goals?",
-          "How much choice do students have in how, when, or what they demonstrate learning?",
+          "What types of activities keep all students engaged and progressing toward learning outcomes?",
+          "How much choice do students have in how, when, or what they demonstrate as learning?",
           "How do you pace lessons to support all learners, including those who need more time or challenge?"
         ]
       },
       "3d": {
-        name: "Using Assessment for Learning",
+        name: "Using Assessment in Instruction",
         subcomponents: [
-          "Visible success criteria and standards",
-          "Monitoring understanding in real time",
-          "Peer feedback and assessment",
-          "Teacher feedback for growth",
-          "Student self-assessment and goal-setting"
+          "Assessment criteria",
+          "Monitoring of student learning",
+          "Feedback to students",
+          "Student self-assessment and monitoring of progress"
         ],
         prompts: [
           "How do you make success criteria visible to students so they understand what quality work looks like?",
@@ -243,12 +235,11 @@ export const frameworkData = {
         ]
       },
       "3e": {
-        name: "Responding Flexibly to Student Needs",
+        name: "Demonstrating Flexibility and Responsiveness",
         subcomponents: [
-          "Adjusting lesson in response to understanding",
-          "Persistence with students who struggle",
-          "Responding to student interests and questions",
-          "Meeting diverse learning needs in the moment"
+          "Lesson adjustment",
+          "Response to students",
+          "Persistence"
         ],
         prompts: [
           "How do you adjust lessons in real time based on evidence of student understanding?",
@@ -260,16 +251,14 @@ export const frameworkData = {
     }
   },
   domain4: {
-    name: "Principled Teaching",
+    name: "Professional Responsibilities",
     description: "Teachers' professional responsibilities grounded in equity, integrity, and student advocacy",
     components: {
       "4a": {
-        name: "Engaging in Reflective Practice",
+        name: "Reflecting on Teaching",
         subcomponents: [
-          "Accurate self-assessment",
-          "Using reflection to improve practice",
-          "Considering impact on all students",
-          "Examining bias and assumptions"
+          "Accuracy of reflection",
+          "Use of reflection in future teaching"
         ],
         prompts: [
           "How do you reflect on what went well and what didn't, including impact on all students?",
@@ -279,12 +268,11 @@ export const frameworkData = {
         ]
       },
       "4b": {
-        name: "Documenting Student Progress",
+        name: "Maintaining Accurate Records",
         subcomponents: [
-          "Student completion and understanding",
-          "Shared student-teacher record-keeping",
-          "Student monitoring of their own progress",
-          "Documentation that captures growth and strengths"
+          "Student completion and progress in learning",
+          "Student monitoring of their own learning",
+          "Non-instructional records"
         ],
         prompts: [
           "How do you keep track of student learning and progress in ways that are accurate and accessible?",
@@ -294,13 +282,11 @@ export const frameworkData = {
         ]
       },
       "4c": {
-        name: "Engaging Families and Communities",
+        name: "Communicating with Families",
         subcomponents: [
-          "Two-way communication about learning",
+          "Information about the instructional program",
           "Information about individual students",
-          "Family engagement in learning",
-          "Cultural competence and community values",
-          "Building on family and community funds of knowledge"
+          "Engagement of families in the instructional program"
         ],
         prompts: [
           "How do you maintain regular, two-way communication with families about their child's learning and growth?",
@@ -311,12 +297,12 @@ export const frameworkData = {
         ]
       },
       "4d": {
-        name: "Contributing to School Community and Culture",
+        name: "Participating in a Professional Community",
         subcomponents: [
-          "Positive relationships with colleagues",
-          "Service to the school and students",
-          "Equity-focused collaboration",
-          "Contributing to inclusive school culture"
+          "Relationships with colleagues",
+          "Involvement in a culture of professional inquiry",
+          "Service to the school",
+          "Participation in school and district projects"
         ],
         prompts: [
           "How do you collaborate with colleagues to support all students, particularly those facing barriers?",
@@ -329,9 +315,8 @@ export const frameworkData = {
         name: "Growing and Developing Professionally",
         subcomponents: [
           "Enhancement of content knowledge and pedagogical skill",
-          "Cultural competence and equity-focused learning",
-          "Service to the profession",
-          "Staying current with research and best practices"
+          "Receptivity to feedback from colleagues",
+          "Service to the profession"
         ],
         prompts: [
           "What professional learning do you pursue, particularly around equity and cultural responsiveness?",
@@ -341,12 +326,12 @@ export const frameworkData = {
         ]
       },
       "4f": {
-        name: "Acting in Service of Students",
+        name: "Showing Professionalism",
         subcomponents: [
-          "Advocacy for students",
-          "Integrity and honesty",
-          "Ethical decision-making",
-          "Care and commitment to student wellbeing"
+          "Integrity and ethical conduct",
+          "Service to students",
+          "Advocacy",
+          "Decision-making"
         ],
         prompts: [
           "Describe a time you had to make a difficult ethical decision on behalf of a student.",

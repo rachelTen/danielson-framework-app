@@ -27,9 +27,9 @@ export default function AssessmentWizard({ onComplete }) {
 
   const domains = [
     { key: 'domain1', label: 'Planning & Preparation', icon: '1', step: 1 },
-    { key: 'domain2', label: 'Learning Environments', icon: '2', step: 2 },
-    { key: 'domain3', label: 'Learning Experiences', icon: '3', step: 3 },
-    { key: 'domain4', label: 'Principled Teaching', icon: '4', step: 4 }
+    { key: 'domain2', label: 'Classroom Environment', icon: '2', step: 2 },
+    { key: 'domain3', label: 'Instruction', icon: '3', step: 3 },
+    { key: 'domain4', label: 'Professional Responsibilities', icon: '4', step: 4 }
   ]
 
   const currentDomainData = frameworkData[currentDomain]
@@ -96,15 +96,35 @@ export default function AssessmentWizard({ onComplete }) {
       const responsesToInsert = Object.entries(responses).map(([responseKey, responseText]) => {
         const componentCode = responseKey.split('_')[0]
         const domainNum = parseInt(componentCode.charAt(0))
+        const domainKey = `domain${domainNum}`
+        const componentName = frameworkData[domainKey]?.components[componentCode]?.name || componentCode
         const rating = ratings[componentCode] || null
 
         return {
           assessment_id: assessment.id,
           component_code: componentCode,
-          component_name: componentCode,
+          component_name: componentName,
           domain_number: domainNum,
           response_text: responseText,
           rating
+        }
+      })
+
+      // Ensure rated components with no text response are also saved
+      Object.entries(ratings).forEach(([componentCode, ratingValue]) => {
+        const alreadyHasEntry = responsesToInsert.some(r => r.component_code === componentCode)
+        if (!alreadyHasEntry) {
+          const domainNum = parseInt(componentCode.charAt(0))
+          const domainKey = `domain${domainNum}`
+          const componentName = frameworkData[domainKey]?.components[componentCode]?.name || componentCode
+          responsesToInsert.push({
+            assessment_id: assessment.id,
+            component_code: componentCode,
+            component_name: componentName,
+            domain_number: domainNum,
+            response_text: '',
+            rating: ratingValue
+          })
         }
       })
 
