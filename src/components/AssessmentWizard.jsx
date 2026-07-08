@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { frameworkData } from '../data/framework'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { ChevronRight, ChevronLeft, Save, Loader, CircleCheck as CheckCircle, Download, Sparkles } from 'lucide-react'
+import { ChevronRight, ChevronLeft, Save, Loader, CircleCheck as CheckCircle, Download, Sparkles, TrendingUp, Target, Award } from 'lucide-react'
 import QuestionSupport from './QuestionSupport'
 import { promptSupport } from '../data/promptSupport'
 
@@ -12,6 +12,31 @@ const RATINGS = [
   { value: 'proficient', label: 'Proficient', shortLabel: 'P', score: 3, bg: '#EFF6FF', border: '#BFDBFE', text: '#1E40AF', dot: '#3B82F6' },
   { value: 'distinguished', label: 'Distinguished', shortLabel: 'D', score: 4, bg: '#F0FDF4', border: '#BBF7D0', text: '#166534', dot: '#22C55E' }
 ]
+
+const NEXT_STEPS_MAP = {
+  '1a': 'Deepen content knowledge by exploring a professional learning community or current research in your discipline. Focus on mapping prerequisite relationships between concepts.',
+  '1b': 'Use structured surveys and cultural inventory tools to learn more about your students at the start of each unit. Build on students\' interests by connecting content to their lives.',
+  '1c': 'Practice unpacking standards and writing measurable outcomes with a colleague or instructional coach. Aim for a balance of knowledge, skill, and higher-order thinking in each unit.',
+  '1d': 'Audit your current classroom and digital resources for diversity, accessibility, and relevance. Identify gaps and source materials that represent multiple perspectives.',
+  '1e': 'Use backward design: start with your learning outcomes, then plan assessments, then design activities. Map how each lesson builds on the last within a unit.',
+  '1f': 'Design one formative assessment per lesson and track patterns in student data over a two-week period. Involve students in creating success criteria for at least one major assessment.',
+  '2a': 'Implement a daily greeting routine and a community-building protocol such as morning meeting or a weekly check-in circle. Practice using restorative language when addressing conflict.',
+  '2b': 'Begin each unit with a hook that helps students connect the content to their own lives. Introduce student-led goal-setting and celebrate growth alongside achievement.',
+  '2c': 'Map your class transitions and identify which ones lose the most time. Redesign them with clear student roles and signals. Practice with students until they become routine.',
+  '2d': 'Identify your two or three most common behavior challenges and create a proactive plan for each—before they occur. Look for patterns in when and why behavior escalates.',
+  '2e': 'Conduct a student-led space audit: ask students what they would change to feel more welcome and productive. Ensure all materials and displays reflect diverse identities.',
+  '3a': 'Post daily learning targets and practice having students restate them in their own words before and after lessons. Check for understanding of directions before releasing students to work.',
+  '3b': 'Introduce structured discussion protocols such as Socratic Seminar or Think-Pair-Share. Track wait time and equitable participation—who speaks, and how often.',
+  '3c': 'Design one unit with two or more student-choice options for demonstrating mastery. Audit your current activities for cognitive engagement and cultural relevance.',
+  '3d': 'Implement a regular exit-ticket routine and use the data to group students for next-day instruction. Build time into lessons for structured peer feedback.',
+  '3e': 'Build a flexible response plan for each lesson: what will you do if 80% of students don\'t understand? Practise responding to unexpected questions as learning opportunities.',
+  '4a': 'Start a reflective journal with three prompts: What worked? Who wasn\'t reached? What will I change? Use observation data or video to check your assumptions.',
+  '4b': 'Introduce a student data-folder system where students track their own progress toward learning goals. Share records with families in an accessible, strength-based format.',
+  '4c': 'Schedule a two-way communication touchpoint with every family at least once per quarter. Use varied formats—calls, notes, apps, or in-person—to meet families where they are.',
+  '4d': 'Identify one school initiative or professional learning community to actively contribute to this term. Offer to share a strategy or lead a short learning segment with colleagues.',
+  '4e': 'Set a professional learning goal tied to your lowest-scoring domain and identify two resources to support it. Seek feedback from a trusted colleague or coach regularly.',
+  '4f': 'Review your school\'s ethical guidelines and identify one area where you want to strengthen your advocacy for students. Reflect on a recent decision and consider whether it was truly in students\' best interest.'
+}
 
 export default function AssessmentWizard({ onComplete }) {
   const { user } = useAuth()
@@ -24,6 +49,7 @@ export default function AssessmentWizard({ onComplete }) {
   const [error, setError] = useState('')
   const [savedAssessmentId, setSavedAssessmentId] = useState(null)
   const [downloadError, setDownloadError] = useState('')
+  const [reflectionNote, setReflectionNote] = useState('')
 
   const domains = [
     { key: 'domain1', label: 'Planning & Preparation', icon: '1', step: 1 },
@@ -63,6 +89,36 @@ export default function AssessmentWizard({ onComplete }) {
     if (avg < 2.5) return RATINGS[1]
     if (avg < 3.5) return RATINGS[2]
     return RATINGS[3]
+  }
+
+  const getAllRatedComponents = () => {
+    return Object.entries(ratings).map(([code, ratingValue]) => {
+      const domainNum = parseInt(code.charAt(0))
+      const domainKey = `domain${domainNum}`
+      const component = frameworkData[domainKey]?.components[code]
+      const ratingData = RATINGS.find(r => r.value === ratingValue)
+      return { code, name: component?.name || code, domainName: frameworkData[domainKey]?.name || '', ratingValue, score: ratingData?.score || 0, ratingData }
+    }).filter(c => c.ratingData)
+  }
+
+  const getOverallAverage = () => {
+    const all = getAllRatedComponents()
+    if (all.length === 0) return null
+    return all.reduce((sum, c) => sum + c.score, 0) / all.length
+  }
+
+  const getTopStrengths = () =>
+    getAllRatedComponents().sort((a, b) => b.score - a.score).slice(0, 3)
+
+  const getTopGrowthAreas = () =>
+    getAllRatedComponents().sort((a, b) => a.score - b.score).slice(0, 3)
+
+  const getInterpretation = (avg) => {
+    if (!avg) return 'Rate components across all four domains to see an interpretation of your results.'
+    if (avg >= 3.5) return 'Your self-assessment reflects highly developed teaching practice. Across most areas you are demonstrating Distinguished teaching—having a significant positive impact on student learning and likely serving as a resource for colleagues.'
+    if (avg >= 2.5) return 'Your self-assessment reflects solid, Proficient practice. You are meeting the expectations of an experienced educator and have a strong foundation to build from. Focus on one or two areas to move from Proficient to Distinguished.'
+    if (avg >= 1.5) return 'Your self-assessment identifies several areas of developing practice. Some components are at a Basic level, which is a normal stage in professional growth. Focus on one domain at a time and seek feedback from a trusted colleague or coach.'
+    return 'Your self-assessment suggests early-stage practice in several components. This is an important starting point for targeted professional learning. Consider working closely with an instructional coach to prioritise the areas that will most benefit your students.'
   }
 
   const handleSaveAssessment = async () => {
@@ -325,98 +381,450 @@ export default function AssessmentWizard({ onComplete }) {
     }
   }
 
+  const generateReflectionPlan = () => {
+    const overallAvg = getOverallAverage()
+    const overallRating = getAverageRating(overallAvg)
+    const strengths = getTopStrengths()
+    const growthAreas = getTopGrowthAreas()
+    const lines = [
+      'DANIELSON FRAMEWORK SELF-ASSESSMENT',
+      'TEACHER REFLECTION & ACTION PLAN',
+      '=====================================',
+      `Title: ${assessmentTitle}`,
+      `Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`,
+      '',
+      'OVERALL SCORE',
+      '-------------',
+      `Overall Rating: ${overallRating ? overallRating.label : 'Not rated'}`,
+      `Overall Score: ${overallAvg ? overallAvg.toFixed(1) : 'N/A'} / 4.0`,
+      '',
+      'DOMAIN SCORES',
+      '-------------'
+    ]
+    domains.forEach(d => {
+      const avg = calculateDomainAverage(d.key)
+      const avgRating = getAverageRating(avg)
+      lines.push(`Domain ${d.icon} – ${frameworkData[d.key].name}: ${avgRating ? avgRating.label : 'Not rated'}${avg ? ` (${avg.toFixed(1)})` : ''}`)
+    })
+    lines.push('')
+    lines.push('TOP 3 STRENGTHS')
+    lines.push('---------------')
+    if (strengths.length === 0) {
+      lines.push('(No components rated)')
+    } else {
+      strengths.forEach((s, i) => {
+        lines.push(`${i + 1}. ${s.code}: ${s.name} – ${s.ratingData.label} (${s.score}.0)`)
+      })
+    }
+    lines.push('')
+    lines.push('TOP 3 GROWTH AREAS')
+    lines.push('------------------')
+    if (growthAreas.length === 0) {
+      lines.push('(No components rated)')
+    } else {
+      growthAreas.forEach((g, i) => {
+        lines.push(`${i + 1}. ${g.code}: ${g.name} – ${g.ratingData.label} (${g.score}.0)`)
+      })
+    }
+    lines.push('')
+    lines.push('INTERPRETATION')
+    lines.push('--------------')
+    lines.push(getInterpretation(overallAvg))
+    lines.push('')
+    lines.push('NEXT STEPS')
+    lines.push('----------')
+    growthAreas.forEach((g, i) => {
+      const step = NEXT_STEPS_MAP[g.code] || 'Seek feedback from a colleague or instructional coach on this area.'
+      lines.push(`${i + 1}. ${g.code} – ${g.name}:`)
+      lines.push(`   ${step}`)
+      lines.push('')
+    })
+    lines.push('MY REFLECTION')
+    lines.push('-------------')
+    lines.push('After reviewing your results, what is one area of practice you want to strengthen this term,')
+    lines.push('and what evidence will show growth?')
+    lines.push('')
+    lines.push(reflectionNote.trim() || '(No response)')
+    return lines
+  }
+
+  const handleDownloadReflection = () => {
+    try {
+      const lines = generateReflectionPlan()
+      const blob = new Blob([lines.join('\n')], { type: 'text/plain' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${assessmentTitle.replace(/\s+/g, '-').toLowerCase()}-reflection-action-plan.txt`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Reflection download failed:', err)
+    }
+  }
+
   if (completed) {
+    const overallAvg = getOverallAverage()
+    const overallRating = getAverageRating(overallAvg)
+    const strengths = getTopStrengths()
+    const growthAreas = getTopGrowthAreas()
+
     return (
-      <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+      <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
+        {/* Sticky header */}
         <div style={{
-          maxWidth: '440px',
-          width: '100%',
-          textAlign: 'center',
-          background: 'var(--bg-elevated)',
-          borderRadius: 'var(--radius-xl)',
-          boxShadow: 'var(--shadow-lg)',
-          padding: '48px 40px'
+          position: 'sticky', top: 0, zIndex: 40,
+          background: 'rgba(247, 248, 245, 0.92)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: '1px solid var(--border-light)'
         }}>
-          <div style={{
-            width: 64, height: 64, borderRadius: '50%',
-            background: '#F0FDF4', margin: '0 auto 20px',
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}>
-            <CheckCircle style={{ width: 32, height: 32, color: '#22C55E' }} />
+          <div style={{ maxWidth: 760, margin: '0 auto', padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#F0FDF4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <CheckCircle style={{ width: 16, height: 16, color: '#22C55E' }} />
+              </div>
+              <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>Assessment Saved</span>
+              <span style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>·</span>
+              <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{assessmentTitle}</span>
+            </div>
+            <button
+              onClick={onComplete}
+              style={{
+                padding: '7px 16px', borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--border)', background: 'transparent',
+                color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500,
+                cursor: 'pointer', transition: 'all 0.15s ease'
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-tertiary)'; e.currentTarget.style.borderColor = '#D1D5DB' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'var(--border)' }}
+            >
+              Return to Dashboard
+            </button>
           </div>
-          <h2 style={{ fontSize: 22, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>
-            Assessment Saved
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: 15, marginBottom: 32, lineHeight: 1.6 }}>
-            Your self-assessment has been saved. Download a copy in your preferred format.
-          </p>
+        </div>
+
+        <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 24px 80px' }}>
+          {/* Page title */}
+          <div style={{ marginBottom: 36 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+              <TrendingUp style={{ width: 20, height: 20, color: 'var(--accent)' }} />
+              <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                Reflection & Next Steps
+              </span>
+            </div>
+            <h1 style={{ fontSize: 26, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6, lineHeight: 1.2 }}>
+              Teacher Reflection & Next Steps
+            </h1>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.7 }}>
+              Review your results, identify areas of strength and growth, and set an intention for your professional practice this term.
+            </p>
+          </div>
+
+          {/* Overall + Domain scores */}
+          <div style={{
+            background: 'var(--bg-elevated)',
+            borderRadius: 'var(--radius-lg)',
+            border: '1px solid var(--border-light)',
+            boxShadow: 'var(--shadow-sm)',
+            overflow: 'hidden',
+            marginBottom: 24
+          }}>
+            {/* Overall score */}
+            <div style={{
+              padding: '20px 24px',
+              background: overallRating ? overallRating.bg : 'var(--bg-primary)',
+              borderBottom: '1px solid var(--border-light)',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+            }}>
+              <div>
+                <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>
+                  Overall Score
+                </p>
+                <p style={{ fontSize: 22, fontWeight: 700, color: overallRating ? overallRating.text : 'var(--text-primary)' }}>
+                  {overallRating ? overallRating.label : 'Not rated'}
+                </p>
+              </div>
+              {overallAvg && (
+                <div style={{ textAlign: 'right' }}>
+                  <p style={{ fontSize: 32, fontWeight: 700, color: overallRating ? overallRating.text : 'var(--text-primary)', lineHeight: 1 }}>
+                    {overallAvg.toFixed(1)}
+                  </p>
+                  <p style={{ fontSize: 12, color: overallRating ? overallRating.text : 'var(--text-tertiary)', opacity: 0.7 }}>/ 4.0</p>
+                </div>
+              )}
+            </div>
+            {/* Domain scores */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0 }}>
+              {domains.map((d, i) => {
+                const avg = calculateDomainAverage(d.key)
+                const avgR = getAverageRating(avg)
+                return (
+                  <div key={d.key} style={{
+                    padding: '16px 20px',
+                    borderRight: i < 3 ? '1px solid var(--border-light)' : 'none',
+                    background: avgR ? avgR.bg : 'transparent'
+                  }}>
+                    <p style={{ fontSize: 11, color: 'var(--text-tertiary)', fontWeight: 500, marginBottom: 4 }}>
+                      Domain {d.icon}
+                    </p>
+                    <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-secondary)', marginBottom: 6, lineHeight: 1.3 }}>
+                      {frameworkData[d.key].name}
+                    </p>
+                    <p style={{ fontSize: 15, fontWeight: 700, color: avgR ? avgR.text : 'var(--text-tertiary)' }}>
+                      {avgR ? avgR.label : 'Not rated'}
+                    </p>
+                    {avg && (
+                      <p style={{ fontSize: 12, color: avgR ? avgR.text : 'var(--text-tertiary)', opacity: 0.7 }}>
+                        {avg.toFixed(1)} / 4.0
+                      </p>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Strengths + Growth areas */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
+            {/* Strengths */}
+            <div style={{
+              background: 'var(--bg-elevated)',
+              borderRadius: 'var(--radius-lg)',
+              border: '1px solid var(--border-light)',
+              boxShadow: 'var(--shadow-sm)',
+              padding: '20px 24px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                <Award style={{ width: 16, height: 16, color: '#22C55E' }} />
+                <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Top 3 Strengths
+                </h3>
+              </div>
+              {strengths.length === 0 ? (
+                <p style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>Rate components to see your strengths.</p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {strengths.map((s, i) => (
+                    <div key={s.code} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                      <span style={{
+                        minWidth: 22, height: 22, borderRadius: '50%',
+                        background: '#F0FDF4', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: 11, fontWeight: 700, color: '#166534', marginTop: 1
+                      }}>{i + 1}</span>
+                      <div>
+                        <span style={{
+                          display: 'inline-block', fontSize: 10, fontWeight: 600, color: 'var(--accent)',
+                          background: 'var(--accent-light)', padding: '1px 7px',
+                          borderRadius: 'var(--radius-sm)', marginBottom: 3
+                        }}>{s.code}</span>
+                        <p style={{ fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.4 }}>{s.name}</p>
+                        <span style={{
+                          fontSize: 11, fontWeight: 500,
+                          color: s.ratingData.text, background: s.ratingData.bg,
+                          border: `1px solid ${s.ratingData.border}`,
+                          padding: '1px 8px', borderRadius: 'var(--radius-full)'
+                        }}>{s.ratingData.label}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Growth areas */}
+            <div style={{
+              background: 'var(--bg-elevated)',
+              borderRadius: 'var(--radius-lg)',
+              border: '1px solid var(--border-light)',
+              boxShadow: 'var(--shadow-sm)',
+              padding: '20px 24px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                <Target style={{ width: 16, height: 16, color: '#F59E0B' }} />
+                <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Top 3 Growth Areas
+                </h3>
+              </div>
+              {growthAreas.length === 0 ? (
+                <p style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>Rate components to see growth areas.</p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {growthAreas.map((g, i) => (
+                    <div key={g.code} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                      <span style={{
+                        minWidth: 22, height: 22, borderRadius: '50%',
+                        background: '#FFFBEB', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: 11, fontWeight: 700, color: '#92400E', marginTop: 1
+                      }}>{i + 1}</span>
+                      <div>
+                        <span style={{
+                          display: 'inline-block', fontSize: 10, fontWeight: 600, color: 'var(--accent)',
+                          background: 'var(--accent-light)', padding: '1px 7px',
+                          borderRadius: 'var(--radius-sm)', marginBottom: 3
+                        }}>{g.code}</span>
+                        <p style={{ fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.4 }}>{g.name}</p>
+                        <span style={{
+                          fontSize: 11, fontWeight: 500,
+                          color: g.ratingData.text, background: g.ratingData.bg,
+                          border: `1px solid ${g.ratingData.border}`,
+                          padding: '1px 8px', borderRadius: 'var(--radius-full)'
+                        }}>{g.ratingData.label}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Interpretation */}
+          <div style={{
+            background: 'var(--bg-elevated)',
+            borderRadius: 'var(--radius-lg)',
+            border: '1px solid var(--border-light)',
+            boxShadow: 'var(--shadow-sm)',
+            padding: '20px 24px',
+            marginBottom: 24
+          }}>
+            <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 10 }}>
+              What Your Results Suggest
+            </h3>
+            <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.75 }}>
+              {getInterpretation(overallAvg)}
+            </p>
+          </div>
+
+          {/* Reflection text box */}
+          <div style={{
+            background: 'var(--bg-elevated)',
+            borderRadius: 'var(--radius-lg)',
+            border: '1px solid var(--border-light)',
+            boxShadow: 'var(--shadow-sm)',
+            padding: '20px 24px',
+            marginBottom: 24
+          }}>
+            <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
+              My Reflection
+            </h3>
+            <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 14, lineHeight: 1.6 }}>
+              After reviewing your results, what is one area of practice you want to strengthen this term, and what evidence will show growth?
+            </p>
+            <textarea
+              value={reflectionNote}
+              onChange={(e) => setReflectionNote(e.target.value)}
+              placeholder="e.g. I want to strengthen my questioning techniques (3b). Evidence will include student-to-student dialogue in at least 3 lessons per week, tracked through lesson observation notes..."
+              rows={5}
+              style={{
+                width: '100%', padding: '12px 16px',
+                background: 'var(--bg-primary)',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-md)',
+                fontSize: 14, color: 'var(--text-primary)',
+                lineHeight: 1.6, resize: 'vertical',
+                outline: 'none', transition: 'all 0.2s ease',
+                minHeight: 110
+              }}
+              onFocus={e => { e.target.style.borderColor = 'var(--accent)'; e.target.style.boxShadow = 'var(--shadow-focus)'; e.target.style.background = 'var(--bg-secondary)' }}
+              onBlur={e => { e.target.style.borderColor = 'var(--border)'; e.target.style.boxShadow = 'none'; e.target.style.background = 'var(--bg-primary)' }}
+            />
+          </div>
+
+          {/* Next steps */}
+          {growthAreas.length > 0 && (
+            <div style={{
+              background: 'var(--bg-elevated)',
+              borderRadius: 'var(--radius-lg)',
+              border: '1px solid var(--border-light)',
+              boxShadow: 'var(--shadow-sm)',
+              padding: '20px 24px',
+              marginBottom: 32
+            }}>
+              <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 16 }}>
+                Suggested Next Steps
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {growthAreas.map((g, i) => (
+                  <div key={g.code} style={{
+                    padding: '14px 18px',
+                    background: 'var(--bg-primary)',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid var(--border-light)'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                      <span style={{
+                        fontSize: 11, fontWeight: 600, color: 'var(--accent)',
+                        background: 'var(--accent-light)', padding: '2px 8px',
+                        borderRadius: 'var(--radius-sm)'
+                      }}>{g.code}</span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{g.name}</span>
+                    </div>
+                    <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.65 }}>
+                      {NEXT_STEPS_MAP[g.code] || 'Seek feedback from a colleague or instructional coach on this area.'}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Export + navigation */}
           {downloadError && (
             <div style={{
-              marginBottom: 20, padding: '12px 16px',
+              marginBottom: 16, padding: '12px 16px',
               background: '#FEF2F2', border: '1px solid #FECACA',
-              borderRadius: 'var(--radius-md)',
-              fontSize: 13, color: '#991B1B'
+              borderRadius: 'var(--radius-md)', fontSize: 13, color: '#991B1B'
             }}>
               {downloadError}
             </div>
           )}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <button
-              onClick={() => handleDownload('pdf')}
+              onClick={handleDownloadReflection}
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                padding: '12px 24px', background: 'var(--accent)', color: '#fff',
-                borderRadius: 'var(--radius-md)', border: 'none', fontSize: 14, fontWeight: 500,
-                cursor: 'pointer', transition: 'all 0.2s ease'
+                padding: '13px 24px', background: 'var(--accent)', color: '#fff',
+                borderRadius: 'var(--radius-md)', border: 'none', fontSize: 14, fontWeight: 600,
+                cursor: 'pointer', transition: 'all 0.2s ease',
+                boxShadow: '0 2px 8px rgba(91, 138, 114, 0.25)'
               }}
-              onMouseEnter={e => e.target.style.background = 'var(--accent-hover)'}
-              onMouseLeave={e => e.target.style.background = 'var(--accent)'}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--accent-hover)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'var(--accent)'}
             >
               <Download style={{ width: 16, height: 16 }} />
-              Download as PDF
+              Download Reflection & Action Plan
             </button>
-            <button
-              onClick={() => handleDownload('docx')}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                padding: '12px 24px', background: 'transparent', color: 'var(--text-secondary)',
-                borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', fontSize: 14, fontWeight: 500,
-                cursor: 'pointer', transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={e => { e.target.style.background = 'var(--bg-tertiary)'; e.target.style.borderColor = '#D1D5DB' }}
-              onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.borderColor = 'var(--border)' }}
-            >
-              <Download style={{ width: 16, height: 16 }} />
-              Download as DOCX
-            </button>
-            <button
-              onClick={() => handleDownload('txt')}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                padding: '12px 24px', background: 'transparent', color: 'var(--text-secondary)',
-                borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', fontSize: 14, fontWeight: 500,
-                cursor: 'pointer', transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={e => { e.target.style.background = 'var(--bg-tertiary)'; e.target.style.borderColor = '#D1D5DB' }}
-              onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.borderColor = 'var(--border)' }}
-            >
-              <Download style={{ width: 16, height: 16 }} />
-              Download as TXT
-            </button>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <button
+                onClick={() => handleDownload('pdf')}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  padding: '11px 16px', background: 'transparent', color: 'var(--text-secondary)',
+                  borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', fontSize: 13, fontWeight: 500,
+                  cursor: 'pointer', transition: 'all 0.15s ease'
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-tertiary)'; e.currentTarget.style.borderColor = '#D1D5DB' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'var(--border)' }}
+              >
+                <Download style={{ width: 14, height: 14 }} />
+                Full Assessment (PDF)
+              </button>
+              <button
+                onClick={() => handleDownload('txt')}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  padding: '11px 16px', background: 'transparent', color: 'var(--text-secondary)',
+                  borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', fontSize: 13, fontWeight: 500,
+                  cursor: 'pointer', transition: 'all 0.15s ease'
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-tertiary)'; e.currentTarget.style.borderColor = '#D1D5DB' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'var(--border)' }}
+              >
+                <Download style={{ width: 14, height: 14 }} />
+                Full Assessment (TXT)
+              </button>
+            </div>
           </div>
-          <button
-            onClick={onComplete}
-            style={{
-              width: '100%',
-              padding: '12px 24px', background: 'transparent', color: 'var(--text-secondary)',
-              borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', fontSize: 14, fontWeight: 500,
-              cursor: 'pointer', transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={e => { e.target.style.background = 'var(--bg-tertiary)'; e.target.style.borderColor = '#D1D5DB' }}
-            onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.borderColor = 'var(--border)' }}
-          >
-            Return to Dashboard
-          </button>
         </div>
       </div>
     )
